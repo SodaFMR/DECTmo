@@ -24,6 +24,8 @@ DEFAULT_SPEED = 50
 PWM_FREQ = 500
 FAILSAFE_MS = 750
 MOTOR_DIRECTION = -1
+BRIDGE_NAME = "micropython_serial_bridge"
+BRIDGE_VERSION = "1.1.0"
 
 
 def make_pwm(pin_number):
@@ -120,6 +122,14 @@ def handle_command(line):
         print("PONG")
         return
 
+    if command == "INFO":
+        print(
+            "INFO bridge={} version={} motor_direction={}".format(
+                BRIDGE_NAME, BRIDGE_VERSION, MOTOR_DIRECTION
+            )
+        )
+        return
+
     if command in ("S", "STOP"):
         last_command_at = time.ticks_ms()
         stop_motors()
@@ -186,7 +196,7 @@ def main():
     stop_motors()
     poller = select.poll()
     poller.register(sys.stdin, select.POLLIN)
-    print("READY micropython_serial_bridge")
+    print("READY {}".format(BRIDGE_NAME))
 
     while True:
         events = poller.poll(10)

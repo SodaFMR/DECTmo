@@ -83,6 +83,7 @@ ssh qartia "cd ~/Desktop/DECTmo && python3 control/pi5_controller/diagnose_seria
 Expected bridge output includes:
 
 ```text
+INFO bridge=micropython_serial_bridge version=1.1.0 motor_direction=-1
 PONG
 OK STOP
 OK MOVE
@@ -101,6 +102,8 @@ Then wait two seconds and run the diagnostic again:
 ```bash
 ssh qartia "cd ~/Desktop/DECTmo && python3 control/pi5_controller/diagnose_serial.py --port /dev/ttyACM0"
 ```
+
+The corrected Freenove polarity reports `motor_direction=-1`. If `/health` or the diagnostic does not show that value, the Pico is not running the corrected bridge yet.
 
 ## 5. First Motor Test After Batteries Are Charged
 

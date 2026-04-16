@@ -40,6 +40,19 @@ Expected JSON includes:
 {"ok": true, "bridge": "PONG"}
 ```
 
+The corrected Freenove motor polarity should also appear in `/health`:
+
+```json
+{"bridge_info": {"motor_direction": "-1"}}
+```
+
+If the value is missing or different, stop the web server, upload the bridge again, and restart the web server:
+
+```bash
+python3 control/pi5_controller/upload_micropython_bridge.py --port /dev/ttyACM0
+python3 control/pi5_controller/diagnose_serial.py --port /dev/ttyACM0
+```
+
 The page supports:
 
 | Input | Action |

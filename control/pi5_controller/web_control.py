@@ -305,10 +305,12 @@ class Controller:
 
     def health(self) -> dict[str, object]:
         with self.lock:
+            bridge_info = self.car.info()
             bridge = self.car.ping() or "no-response"
         return {
             "ok": bridge == "PONG",
             "bridge": bridge,
+            "bridge_info": bridge_info,
             "serial_port": self.car.port,
             "camera": self.camera.status(),
         }

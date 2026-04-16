@@ -129,6 +129,20 @@ class SerialCar:
                 return response
         return lines[-1] if lines else ""
 
+    def info(self) -> dict[str, str]:
+        if self.serial is None:
+            raise SerialCarError("Serial connection is not open.")
+        self.read_available_lines()
+        self.send_line("INFO")
+        deadline = time.monotonic() + 1.0
+        while time.monotonic() < deadline:
+            response = self.serial.readline().decode("utf-8", errors="replace").strip()
+            if not response:
+                continue
+            if response.startswith("INFO "):
+                return self._parse_info(response)
+        return {}
+
     def read_available_lines(self) -> list[str]:
         if self.serial is None:
             raise SerialCarError("Serial connection is not open.")
@@ -168,3 +182,13 @@ class SerialCar:
     def _validate_speed(speed: int) -> None:
         if speed < 0 or speed > 100:
             raise SerialCarError("Speed must be between 0 and 100.")
+
+    @staticmethod
+    def _parse_info(line: str) -> dict[str, str]:
+        info: dict[str, str] = {}
+        for item in line.removeprefix("INFO ").split():
+            if "=" not in item:
+                continue
+            key, value = item.split("=", 1)
+            info[key] = value
+        return info

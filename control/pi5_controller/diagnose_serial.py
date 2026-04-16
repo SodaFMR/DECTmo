@@ -10,6 +10,7 @@ from serial_car import DEFAULT_BAUD, find_pico_port
 
 
 PROBE_COMMANDS = (
+    "INFO",
     "PING",
     "S",
     "F 20 100",
@@ -67,7 +68,18 @@ def send_probe(device: serial.Serial, command: str) -> list[str]:
 def classify(lines_by_command: dict[str, list[str]]) -> str:
     all_lines = [line for lines in lines_by_command.values() for line in lines]
     if "PONG" in all_lines:
-        return "OK: expected pico_serial_bridge firmware is responding."
+        info_lines = [line for line in all_lines if line.startswith("INFO ")]
+        if not info_lines:
+            return (
+                "Partial: bridge responds to PING, but does not report firmware info. "
+                "Upload the latest bridge before movement tests."
+            )
+        if "motor_direction=-1" not in info_lines[-1]:
+            return (
+                "Partial: bridge responds, but motor polarity is not the corrected "
+                "Freenove value motor_direction=-1."
+            )
+        return "OK: expected bridge firmware and corrected motor polarity are responding."
     if any("Pico confirma" in line or "recibi" in line for line in all_lines):
         return (
             "Mismatch: USB serial works, but the Pico is running a different "

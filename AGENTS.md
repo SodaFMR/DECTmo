@@ -35,6 +35,7 @@ The expected bridge replies are:
 
 ```text
 READY micropython_serial_bridge
+INFO bridge=micropython_serial_bridge version=1.1.0 motor_direction=-1
 PONG
 OK STOP
 OK MOVE

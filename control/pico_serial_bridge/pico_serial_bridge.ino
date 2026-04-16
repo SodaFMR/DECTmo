@@ -28,6 +28,8 @@ const int MOTOR_SPEED_MAX = 100;
 const int DEFAULT_SPEED = 50;
 const int MOTOR_DIRECTION = -1;
 const unsigned long FAILSAFE_MS = 750;
+const char *BRIDGE_NAME = "pico_serial_bridge";
+const char *BRIDGE_VERSION = "1.1.0";
 
 String inputLine = "";
 unsigned long lastCommandAt = 0;
@@ -49,7 +51,8 @@ void setup() {
 
   stopMotors();
   lastCommandAt = millis();
-  Serial.println("READY pico_serial_bridge");
+  Serial.print("READY ");
+  Serial.println(BRIDGE_NAME);
 }
 
 void loop() {
@@ -104,6 +107,16 @@ void handleCommand(String line) {
 
   if (matches(command, "PING")) {
     Serial.println("PONG");
+    return;
+  }
+
+  if (matches(command, "INFO")) {
+    Serial.print("INFO bridge=");
+    Serial.print(BRIDGE_NAME);
+    Serial.print(" version=");
+    Serial.print(BRIDGE_VERSION);
+    Serial.print(" motor_direction=");
+    Serial.println(MOTOR_DIRECTION);
     return;
   }
 
