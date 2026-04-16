@@ -26,6 +26,7 @@ const int PIN_MOTOR_PWM_LEFT4 = 20;
 const int MOTOR_SPEED_MIN = -100;
 const int MOTOR_SPEED_MAX = 100;
 const int DEFAULT_SPEED = 50;
+const int MOTOR_DIRECTION = -1;
 const unsigned long FAILSAFE_MS = 750;
 
 String inputLine = "";
@@ -211,7 +212,7 @@ void setWheels(int m1Speed, int m2Speed, int m3Speed, int m4Speed) {
 }
 
 void writeMotor(int forwardPin, int reversePin, int speed) {
-  speed = constrain(speed, MOTOR_SPEED_MIN, MOTOR_SPEED_MAX);
+  speed = constrain(speed * MOTOR_DIRECTION, MOTOR_SPEED_MIN, MOTOR_SPEED_MAX);
   int pwm = map(abs(speed), 0, MOTOR_SPEED_MAX, 0, 255);
 
   if (speed >= 0) {

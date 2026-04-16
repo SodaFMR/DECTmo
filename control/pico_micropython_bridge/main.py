@@ -23,6 +23,7 @@ MOTOR_SPEED_MAX = 100
 DEFAULT_SPEED = 50
 PWM_FREQ = 500
 FAILSAFE_MS = 750
+MOTOR_DIRECTION = -1
 
 
 def make_pwm(pin_number):
@@ -62,7 +63,7 @@ def speed_to_duty(speed):
 
 
 def write_motor(forward_pwm, reverse_pwm, speed):
-    speed = clamp(speed, MOTOR_SPEED_MIN, MOTOR_SPEED_MAX)
+    speed = clamp(speed * MOTOR_DIRECTION, MOTOR_SPEED_MIN, MOTOR_SPEED_MAX)
     duty = speed_to_duty(speed)
     if speed >= 0:
         forward_pwm.duty_u16(duty)
