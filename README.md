@@ -32,14 +32,15 @@ docs/pi5-pico-usb-control.md    Setup and operating notes
 
 1. Flash `control/pico_serial_bridge/pico_serial_bridge.ino` to the Pico with Arduino IDE.
 2. Connect the Pico to the Pi 5 over USB.
-3. On the Pi 5, install serial support:
+3. Follow `docs/bringup-checklist.md` to enable `ssh qartia`, confirm the Pico appears as `/dev/ttyACM0`, and ping the firmware.
+4. On the Pi 5, install serial support:
 
 ```bash
 sudo apt update
 sudo apt install -y python3-serial
 ```
 
-4. Run the keyboard controller:
+5. Run the keyboard controller:
 
 ```bash
 python3 control/pi5_controller/keyboard_control.py --wheel-mode ordinary
