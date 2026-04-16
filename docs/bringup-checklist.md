@@ -74,6 +74,22 @@ Expected:
 PONG
 ```
 
+For a fuller diagnostic, run:
+
+```bash
+ssh qartia "cd ~/DECTmo && python3 control/pi5_controller/diagnose_serial.py --port /dev/ttyACM0"
+```
+
+Expected bridge output includes:
+
+```text
+PONG
+OK STOP
+OK MOVE
+```
+
+If the output says something like `La Pico confirma que recibio: S`, USB serial is working but the Pico is running a different program. Flash `control/pico_serial_bridge/pico_serial_bridge.ino` onto the Pico before testing motor movement.
+
 ## 5. First Motor Test After Batteries Are Charged
 
 Put the car on a stand so the wheels cannot drive off the table.

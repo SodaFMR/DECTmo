@@ -9,6 +9,7 @@ from serial.tools import list_ports
 
 DEFAULT_BAUD = 115200
 DEFAULT_PULSE_MS = 250
+READ_IDLE_SECONDS = 0.08
 
 
 class SerialCarError(RuntimeError):
@@ -81,6 +82,8 @@ class SerialCar:
         time.sleep(self.startup_delay)
         self.serial.reset_input_buffer()
         self.stop()
+        time.sleep(READ_IDLE_SECONDS)
+        self.read_available_lines()
 
     def close(self) -> None:
         if self.serial is None:
@@ -113,9 +116,33 @@ class SerialCar:
     def ping(self) -> str:
         if self.serial is None:
             raise SerialCarError("Serial connection is not open.")
+        self.read_available_lines()
         self.send_line("PING")
-        response = self.serial.readline().decode("ascii", errors="replace").strip()
-        return response
+        deadline = time.monotonic() + 1.0
+        lines: list[str] = []
+        while time.monotonic() < deadline:
+            response = self.serial.readline().decode("utf-8", errors="replace").strip()
+            if not response:
+                continue
+            lines.append(response)
+            if response == "PONG":
+                return response
+        return lines[-1] if lines else ""
+
+    def read_available_lines(self) -> list[str]:
+        if self.serial is None:
+            raise SerialCarError("Serial connection is not open.")
+        lines: list[str] = []
+        deadline = time.monotonic() + READ_IDLE_SECONDS
+        while time.monotonic() < deadline:
+            if self.serial.in_waiting == 0:
+                time.sleep(0.01)
+                continue
+            line = self.serial.readline().decode("utf-8", errors="replace").strip()
+            if line:
+                lines.append(line)
+                deadline = time.monotonic() + READ_IDLE_SECONDS
+        return lines
 
     def _write_move(self, command: MoveCommand) -> None:
         if self.serial is None:
