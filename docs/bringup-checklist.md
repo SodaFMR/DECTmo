@@ -53,7 +53,7 @@ ssh qartia "sudo apt update && sudo apt install -y git python3-serial"
 Clone or update the project on the Pi:
 
 ```bash
-ssh qartia "test -d ~/DECTmo && git -C ~/DECTmo pull --ff-only || git clone https://github.com/SodaFMR/DECTmo.git ~/DECTmo"
+ssh qartia "test -d ~/Desktop/DECTmo && git -C ~/Desktop/DECTmo pull --ff-only || git clone https://github.com/SodaFMR/DECTmo.git ~/Desktop/DECTmo"
 ```
 
 ## 4. Ping The Pico Firmware
@@ -61,7 +61,7 @@ ssh qartia "test -d ~/DECTmo && git -C ~/DECTmo pull --ff-only || git clone http
 This verifies the flashed bridge sketch is alive, even while the car batteries are still charging:
 
 ```bash
-ssh qartia "cd ~/DECTmo && python3 - <<'PY'
+ssh qartia "cd ~/Desktop/DECTmo && python3 - <<'PY'
 from control.pi5_controller.serial_car import SerialCar
 with SerialCar('/dev/ttyACM0') as car:
     print(car.ping())
@@ -77,7 +77,7 @@ PONG
 For a fuller diagnostic, run:
 
 ```bash
-ssh qartia "cd ~/DECTmo && python3 control/pi5_controller/diagnose_serial.py --port /dev/ttyACM0"
+ssh qartia "cd ~/Desktop/DECTmo && python3 control/pi5_controller/diagnose_serial.py --port /dev/ttyACM0"
 ```
 
 Expected bridge output includes:
@@ -90,6 +90,18 @@ OK MOVE
 
 If the output says something like `La Pico confirma que recibio: S`, USB serial is working but the Pico is running a different program. Flash `control/pico_serial_bridge/pico_serial_bridge.ino` onto the Pico before testing motor movement.
 
+Because the Pico is already running MicroPython in that case, the fastest fix is to upload the MicroPython bridge from the Pi:
+
+```bash
+ssh qartia "cd ~/Desktop/DECTmo && python3 control/pi5_controller/upload_micropython_bridge.py --port /dev/ttyACM0"
+```
+
+Then wait two seconds and run the diagnostic again:
+
+```bash
+ssh qartia "cd ~/Desktop/DECTmo && python3 control/pi5_controller/diagnose_serial.py --port /dev/ttyACM0"
+```
+
 ## 5. First Motor Test After Batteries Are Charged
 
 Put the car on a stand so the wheels cannot drive off the table.
@@ -97,7 +109,7 @@ Put the car on a stand so the wheels cannot drive off the table.
 Send a very short low-speed pulse:
 
 ```bash
-ssh qartia "cd ~/DECTmo && python3 - <<'PY'
+ssh qartia "cd ~/Desktop/DECTmo && python3 - <<'PY'
 import time
 from control.pi5_controller.serial_car import SerialCar
 with SerialCar('/dev/ttyACM0') as car:
@@ -114,13 +126,13 @@ If the wheels spin backward, the motor polarity is reversed relative to the curr
 Keyboard:
 
 ```bash
-ssh -t qartia "cd ~/DECTmo && python3 control/pi5_controller/keyboard_control.py --port /dev/ttyACM0 --wheel-mode ordinary"
+ssh -t qartia "cd ~/Desktop/DECTmo && python3 control/pi5_controller/keyboard_control.py --port /dev/ttyACM0 --wheel-mode ordinary"
 ```
 
 Browser:
 
 ```bash
-ssh qartia "cd ~/DECTmo && python3 control/pi5_controller/web_control.py --port /dev/ttyACM0 --wheel-mode ordinary --host 0.0.0.0 --http-port 8000"
+ssh qartia "cd ~/Desktop/DECTmo && python3 control/pi5_controller/web_control.py --port /dev/ttyACM0 --wheel-mode ordinary --host 0.0.0.0 --http-port 8000"
 ```
 
 Open:

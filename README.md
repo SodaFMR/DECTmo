@@ -24,6 +24,7 @@ The USB cable is for serial commands. Keep the Freenove car battery connected fo
 
 ```text
 control/pico_serial_bridge/     Arduino sketch to flash onto the Pico
+control/pico_micropython_bridge/MicroPython bridge to save as Pico main.py
 control/pi5_controller/         Pi 5 keyboard and browser controllers
 docs/pi5-pico-usb-control.md    Setup and operating notes
 ```
