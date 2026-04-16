@@ -27,6 +27,7 @@ control/pico_serial_bridge/     Arduino sketch to flash onto the Pico
 control/pico_micropython_bridge/MicroPython bridge to save as Pico main.py
 control/pi5_controller/         Pi 5 keyboard and browser controllers
 docs/pi5-pico-usb-control.md    Setup and operating notes
+docs/remote-control-and-video.md Same-WiFi control and USB camera tests
 ```
 
 ## Quick Start
@@ -54,3 +55,5 @@ python3 control/pi5_controller/web_control.py --wheel-mode ordinary --host 0.0.0
 ```
 
 Then open `http://<raspberry-pi-ip>:8000`.
+
+For same-WiFi browser control and USB camera streaming, follow `docs/remote-control-and-video.md`.
