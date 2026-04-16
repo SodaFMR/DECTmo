@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "control" / "pi5_controller"))
 
 from motion_protocol import MotionCommand, MotionProtocolError, MotionSequence
+from pico_command import build_pico_motion_line
 from web_motion import web_command_payload
 
 
@@ -83,6 +84,24 @@ class MotionProtocolTest(unittest.TestCase):
         self.assertEqual(command.speed, 33)
         self.assertEqual(command.duration_ms, 250)
         self.assertEqual(command.source, "web")
+
+    def test_ordinary_left_uses_gentle_pivot(self) -> None:
+        self.assertEqual(
+            build_pico_motion_line("left", 50, 250, "ordinary"),
+            "DRIVE 0 32 250",
+        )
+
+    def test_ordinary_right_uses_gentle_pivot(self) -> None:
+        self.assertEqual(
+            build_pico_motion_line("right", 50, 250, "ordinary"),
+            "DRIVE 32 0 250",
+        )
+
+    def test_mecanum_left_keeps_strafe(self) -> None:
+        self.assertEqual(
+            build_pico_motion_line("left", 50, 250, "mecanum"),
+            "ML 50 250",
+        )
 
 
 if __name__ == "__main__":

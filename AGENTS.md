@@ -48,6 +48,7 @@ OK AUTO_STOP
 - Same-WiFi control should work from another computer, including idFelipe, through a browser hosted by the Pi 5.
 - Movement controls should support game-style `W`, `A`, `S`, `D` keys and clear front/back/left/right actions.
 - V1 `left` and `right` mean turning in place while standing still.
+- Ordinary-wheel `left` and `right` are calibrated as gentle pivot turns: one side stopped, the other side moving at 65% of requested speed.
 - Movement commands support speed `1-100`; `stop` normalizes to speed `0`.
 - USB camera video should be exposed from the Pi 5 as live footage in the same browser control surface.
 - Code should stay simple and readable: small modules, direct names, comments only where they clarify non-obvious hardware behavior.

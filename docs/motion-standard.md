@@ -19,6 +19,21 @@ DECT later -> Pi motion standard -> Pico USB bridge -> motors
 
 Curved movement is not part of v1. It can be added later as a separate action family.
 
+## Ordinary-Wheel Turn Calibration
+
+The external standard still uses only `left` and `right`. Internally, the Pi maps those actions to a gentler ordinary-wheel pivot because the original opposite-wheel spin was too aggressive for the Freenove chassis.
+
+Current ordinary-wheel mapping:
+
+| Action | Pico command |
+| --- | --- |
+| `left` | `DRIVE 0 <turn_speed> <duration_ms>` |
+| `right` | `DRIVE <turn_speed> 0 <duration_ms>` |
+
+`turn_speed` is currently `65%` of the requested speed. Increase the UI speed if the turn is too weak, or reduce it if the car skids.
+
+Mecanum mode still maps `left` and `right` to lateral strafe commands.
+
 ## Speed
 
 Movement commands carry `speed` from `1` to `100`.

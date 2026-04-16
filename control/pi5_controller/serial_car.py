@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import time
-from dataclasses import dataclass
 
 import serial
 from serial.tools import list_ports
+
+from pico_command import build_pico_motion_line
 
 
 DEFAULT_BAUD = 115200
@@ -41,16 +42,6 @@ def find_pico_port(preferred_port: str | None = None) -> str:
             return port.device
 
     return ports[0].device
-
-
-@dataclass(frozen=True)
-class MoveCommand:
-    command: str
-    speed: int
-    duration_ms: int
-
-    def encode(self) -> bytes:
-        return f"{self.command} {self.speed} {self.duration_ms}\n".encode("ascii")
 
 
 class SerialCar:
@@ -103,12 +94,11 @@ class SerialCar:
 
     def send_move(self, action: str, speed: int, duration_ms: int, wheel_mode: str) -> None:
         self._validate_speed(speed)
-        action_key = action.lower()
-        command = self._command_for_action(action_key, wheel_mode)
-        if command == "S":
+        command_line = build_pico_motion_line(action, speed, duration_ms, wheel_mode)
+        if command_line == "S":
             self.stop()
             return
-        self._write_move(MoveCommand(command, speed, duration_ms))
+        self.send_line(command_line)
 
     def stop(self) -> None:
         self.send_line("S")
@@ -157,26 +147,6 @@ class SerialCar:
                 lines.append(line)
                 deadline = time.monotonic() + READ_IDLE_SECONDS
         return lines
-
-    def _write_move(self, command: MoveCommand) -> None:
-        if self.serial is None:
-            raise SerialCarError("Serial connection is not open.")
-        self.serial.write(command.encode())
-        self.serial.flush()
-
-    @staticmethod
-    def _command_for_action(action: str, wheel_mode: str) -> str:
-        if action == "forward":
-            return "F"
-        if action == "backward":
-            return "B"
-        if action == "left":
-            return "ML" if wheel_mode == "mecanum" else "L"
-        if action == "right":
-            return "MR" if wheel_mode == "mecanum" else "R"
-        if action == "stop":
-            return "S"
-        raise SerialCarError(f"Unsupported action: {action}")
 
     @staticmethod
     def _validate_speed(speed: int) -> None:
