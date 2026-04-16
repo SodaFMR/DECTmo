@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "type": "motion.sequence",
+  "id": "square-small",
+  "name": "Small square path",
+  "default_speed": 22,
+  "wheel_mode": "ordinary",
+  "steps": [
+    {
+      "action": "forward",
+      "duration_ms": 700
+    },
+    {
+      "action": "right",
+      "duration_ms": 350
+    },
+    {
+      "action": "forward",
+      "duration_ms": 700
+    },
+    {
+      "action": "right",
+      "duration_ms": 350
+    },
+    {
+      "action": "forward",
+      "duration_ms": 700
+    },
+    {
+      "action": "right",
+      "duration_ms": 350
+    },
+    {
+      "action": "forward",
+      "duration_ms": 700
+    },
+    {
+      "action": "right",
+      "duration_ms": 350
+    },
+    {
+      "action": "stop"
+    }
+  ]
+}
