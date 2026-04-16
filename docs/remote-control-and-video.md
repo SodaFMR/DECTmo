@@ -53,6 +53,35 @@ python3 control/pi5_controller/upload_micropython_bridge.py --port /dev/ttyACM0
 python3 control/pi5_controller/diagnose_serial.py --port /dev/ttyACM0
 ```
 
+Safe standard-command check from another computer:
+
+```bash
+curl -X POST http://192.168.0.167:8000/command \
+  -H "Content-Type: application/json" \
+  -d '{"action":"stop"}'
+```
+
+Expected response:
+
+```json
+{
+  "version": 1,
+  "type": "motion.ack",
+  "status": "accepted",
+  "dry_run": false,
+  "command": {
+    "type": "motion.command",
+    "source": "web",
+    "action": "stop",
+    "speed": 0,
+    "duration_ms": 0,
+    "wheel_mode": "ordinary"
+  }
+}
+```
+
+Browser movement uses the same standard command path. When `W` is held, the browser repeatedly sends `forward` commands with the selected speed and the server validates them as `motion.command` before sending anything to the Pico.
+
 The page supports:
 
 | Input | Action |

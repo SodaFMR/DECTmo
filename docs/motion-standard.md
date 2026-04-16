@@ -131,6 +131,36 @@ Override speed for all movement steps:
 python3 control/pi5_controller/sequence_runner.py direction_check --execute --port /dev/ttyACM0 --speed 15
 ```
 
+## Web Control Mapping
+
+The browser controller uses the same command standard as the sequence runner and future DECT receiver.
+
+Browser payload:
+
+```json
+{
+  "action": "forward",
+  "speed": 50,
+  "wheelMode": "ordinary"
+}
+```
+
+Server-side canonical command:
+
+```json
+{
+  "version": 1,
+  "type": "motion.command",
+  "source": "web",
+  "action": "forward",
+  "speed": 50,
+  "duration_ms": 250,
+  "wheel_mode": "ordinary"
+}
+```
+
+The server returns a `motion.ack` response for accepted commands.
+
 ## DECT NR+ Mapping Later
 
 JSON is the current human-readable standard. For the real DECT transport, the payload can be converted into a compact binary packet, but it must preserve the same fields:

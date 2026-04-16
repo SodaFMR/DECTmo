@@ -9,7 +9,10 @@ from threading import Lock
 from urllib.parse import urlparse
 
 from camera_stream import CameraConfig, UsbCamera
+from motion_controller import MotionController
+from motion_protocol import MotionCommand, MotionProtocolError
 from serial_car import DEFAULT_BAUD, DEFAULT_PULSE_MS, SerialCar, SerialCarError
+from web_motion import web_command_payload
 
 
 HTML = """<!doctype html>
@@ -294,14 +297,17 @@ class Controller:
         self.camera = camera
         self.default_wheel_mode = default_wheel_mode
         self.pulse_ms = pulse_ms
+        self.motion_controller = MotionController(car=car, dry_run=False)
         self.lock = Lock()
 
-    def command(self, action: str, speed: int, wheel_mode: str | None = None) -> None:
-        mode = wheel_mode or self.default_wheel_mode
-        if mode not in {"ordinary", "mecanum"}:
-            raise SerialCarError("wheelMode must be ordinary or mecanum.")
+    def command(self, payload: dict[str, object]) -> dict[str, object]:
+        command = MotionCommand.from_dict(self.command_payload(payload))
         with self.lock:
-            self.car.send_move(action, speed, self.pulse_ms, mode)
+            result = self.motion_controller.execute(command)
+        return result.to_dict()
+
+    def command_payload(self, payload: dict[str, object]) -> dict[str, object]:
+        return web_command_payload(payload, self.default_wheel_mode, self.pulse_ms)
 
     def health(self) -> dict[str, object]:
         with self.lock:
@@ -382,17 +388,13 @@ class RequestHandler(BaseHTTPRequestHandler):
         try:
             length = int(self.headers.get("Content-Length", "0"))
             payload = json.loads(self.rfile.read(length).decode("utf-8"))
-            action = str(payload.get("action", "stop"))
-            speed = int(payload.get("speed", 50))
-            wheel_mode = str(payload.get("wheelMode", ""))
-            self.controller.command(action, speed, wheel_mode or None)
-        except (ValueError, json.JSONDecodeError, SerialCarError) as exc:
+            result = self.controller.command(payload)
+        except (ValueError, json.JSONDecodeError, MotionProtocolError, SerialCarError) as exc:
             self.send_response(HTTPStatus.BAD_REQUEST)
             self.end_headers()
             self.wfile.write(str(exc).encode("utf-8"))
             return
-        self.send_response(HTTPStatus.NO_CONTENT)
-        self.end_headers()
+        self.send_json(result, HTTPStatus.OK)
 
     def log_message(self, format: str, *args) -> None:
         return
