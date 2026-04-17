@@ -25,6 +25,7 @@ These notes are the persistent working contract for future development sessions 
 - USB camera streaming works through the Pi browser server.
 - Local movement sequences and protocol unit tests are available.
 - DECT command packet v1 is defined in `docs/dect-command-packet-v1.md` and implemented in `control/pi5_controller/dect_packet.py`.
+- Pi-side nRF9151 is visible through SEGGER J-Link and `/dev/ttyACM1` responds to safe `AT` / `AT+CGMR` probes with `mfw_nrf91x1_2.0.2`.
 
 ## Hardware Roles
 
@@ -43,6 +44,7 @@ These notes are the persistent working contract for future development sessions 
 - The Pi may convert validated motion commands into Pico-specific serial strings.
 - Remote-side DECT commands should target the logical motion contract, not raw Pico commands.
 - Future nRF9151 command transport should carry the packet bytes from `control/pi5_controller/dect_packet.py`.
+- `/dev/ttyACM1` is currently the Pi-side nRF AT modem/application port; `/dev/ttyACM2` did not reply during bring-up.
 - Command traffic is reliable and acknowledged.
 - Heartbeat packets are the preferred no-motor link check for future nRF9151 bring-up.
 - Video traffic is separate and can be best-effort.
@@ -163,11 +165,18 @@ python -m compileall control tests
 python -m unittest discover -s tests
 ```
 
+nRF9151 modem-port diagnosis:
+
+```bash
+cd ~/Desktop/DECTmo
+python3 control/pi5_controller/diagnose_nrf_modem.py
+```
+
 ## Next Implementation Order
 
 1. Keep movement debugging separate from protocol work unless a protocol issue is discovered.
 2. Finish ordinary-wheel left/right calibration with lifted-car and floor tests.
-3. Integrate one nRF9151 with the Pi 5 over USB serial.
-4. Build the Pi-side nRF serial adapter around the DECTmo packet bytes.
+3. Confirm both nRF9151 boards can expose a DECT NR+ application payload path.
+4. Build the Pi-side nRF serial adapter around the DECTmo packet bytes once that payload path is available.
 5. Prove real DECT command delivery between two nRF9151 boards with heartbeat, emergency stop, and one short movement.
 6. Only after command reliability is stable, start low-quality video packetization and throughput tests.

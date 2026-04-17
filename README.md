@@ -19,6 +19,7 @@ The following parts have been brought up and verified:
 - USB camera live stream exposed by the Pi browser server.
 - Motion sequences and validation tests for repeatable movement checks.
 - DECT command packet v1 defined and covered by encode/decode tests.
+- nRF9151 USB modem/application port identified as `/dev/ttyACM1`, responding to `AT` and `AT+CGMR`.
 
 Left/right movement is intentionally still marked for real-world tuning. The current ordinary-wheel behavior is a gentle pivot: one side stops while the other side moves at 65% of the requested speed.
 
@@ -141,6 +142,12 @@ OK MOVE
 OK AUTO_STOP
 ```
 
+Verify the nRF9151 USB modem/application port:
+
+```bash
+python3 control/pi5_controller/diagnose_nrf_modem.py
+```
+
 Start the browser controller with camera streaming:
 
 ```bash
@@ -202,6 +209,7 @@ control/pi5_controller/           Pi-side serial, motion, web, camera, and seque
 control/pi5_controller/sequences/ Predefined movement checks
 docs/bringup-checklist.md         First hardware and SSH bring-up flow
 docs/dect-command-packet-v1.md    Compact command packet for future nRF9151 transport
+docs/nrf9151-bringup.md           nRF9151 USB modem port diagnosis
 docs/pi5-pico-usb-control.md      USB control and Freenove motor notes
 docs/remote-control-and-video.md  Same-WiFi browser control and USB camera flow
 docs/motion-standard.md           Canonical motion command contract
@@ -213,8 +221,8 @@ The Freenove vendor package is intentionally ignored by Git. Keep it local when 
 ## Next Phases
 
 1. Finish movement calibration for ordinary wheels, especially left/right turning behavior.
-2. Connect the nRF9151 attached to the Pi 5, preferably over USB virtual serial for first integration.
-3. Build the Pi-side nRF serial adapter around the DECTmo packet bytes.
+2. Confirm both nRF9151 boards can expose a DECT NR+ payload path, starting from the verified `/dev/ttyACM1` AT port on the Pi-side board.
+3. Build the Pi-side nRF serial adapter around the DECTmo packet bytes once that payload path is available.
 4. Prove real command delivery over the actual DECT NR+ path with heartbeat, emergency `STOP`, and one short movement command.
 5. Define and test low-quality live video packetization after command reliability is stable.
 6. Revisit H.264 or another compressed video path once the radio throughput and latency are measured.
