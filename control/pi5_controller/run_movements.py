@@ -15,15 +15,23 @@ from movement_programs import (
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Run simple car movement programs.")
-    parser.add_argument("name", nargs="?", help="Built-in program name or movement JSON file.")
+    parser = argparse.ArgumentParser(
+        description="Run simple car movement programs.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+    parser.add_argument(
+        "name",
+        nargs="?",
+        default="direction_check",
+        help="Built-in program name or movement JSON file.",
+    )
     parser.add_argument("--list", action="store_true", help="List available programs and JSON files.")
     parser.add_argument("--execute", action="store_true", help="Move the physical car.")
     parser.add_argument("--port", help="Pico serial port, for example /dev/ttyACM0.")
-    parser.add_argument("--baud", type=int, default=DEFAULT_BAUD)
+    parser.add_argument("--baud", type=int, default=DEFAULT_BAUD, help="Pico serial baud rate.")
     parser.add_argument("--speed", type=int, help="Override movement speed.")
     parser.add_argument("--duration-ms", type=int, help="Override movement duration.")
-    parser.add_argument("--gap-ms", type=int, default=150)
+    parser.add_argument("--gap-ms", type=int, default=300, help="Pause after each movement.")
     return parser.parse_args()
 
 
@@ -51,9 +59,6 @@ def main() -> int:
     if args.list:
         print_available()
         return 0
-    if not args.name:
-        raise SystemExit("Provide a program/JSON name or use --list.")
-
     try:
         movements = load_by_name(args.name, speed=args.speed, duration_ms=args.duration_ms)
     except (FileNotFoundError, ValueError, json.JSONDecodeError, CarError) as exc:

@@ -105,8 +105,10 @@ Start the web UI:
 
 ```bash
 cd ~/Desktop/DECTmo
-python3 control/pi5_controller/web_control.py --port /dev/ttyACM0 --host 0.0.0.0 --http-port 8000 --camera-device /dev/video0
+python3 control/pi5_controller/web_control.py
 ```
+
+Default web values are auto Pico port, `0.0.0.0`, HTTP port `8000`, `/dev/video0`, `ordinary` wheel mode, and 250 ms movement pulses.
 
 List movement programs:
 
@@ -117,7 +119,7 @@ python3 control/pi5_controller/run_movements.py --list
 Dry-run a movement:
 
 ```bash
-python3 control/pi5_controller/run_movements.py direction_check
+python3 control/pi5_controller/run_movements.py
 ```
 
 Execute a movement with the car lifted:
@@ -125,6 +127,8 @@ Execute a movement with the car lifted:
 ```bash
 python3 control/pi5_controller/run_movements.py direction_check --execute --port /dev/ttyACM0 --speed 15
 ```
+
+`--execute` must stay explicit because it is the safety boundary between dry-run and real motor movement.
 
 Run repository checks:
 

@@ -121,7 +121,7 @@ On the car Pi:
 ```bash
 cd ~/Desktop/DECTmo
 git pull --ff-only
-python3 control/pi5_controller/web_control.py --port /dev/ttyACM0 --host 0.0.0.0 --http-port 8000 --camera-device /dev/video0
+python3 control/pi5_controller/web_control.py
 ```
 
 Open from another computer on the same WiFi:
@@ -133,7 +133,18 @@ http://192.168.0.167:8000
 Without camera:
 
 ```bash
-python3 control/pi5_controller/web_control.py --port /dev/ttyACM0 --host 0.0.0.0 --http-port 8000 --no-camera
+python3 control/pi5_controller/web_control.py --no-camera
+```
+
+Default web values:
+
+```text
+Pico serial port: auto-detected, usually /dev/ttyACM0
+host: 0.0.0.0
+HTTP port: 8000
+camera: /dev/video0
+wheel mode: ordinary
+movement pulse: 250 ms
 ```
 
 ## Run Movement Programs
@@ -147,6 +158,7 @@ python3 control/pi5_controller/run_movements.py --list
 Dry-run without moving the car:
 
 ```bash
+python3 control/pi5_controller/run_movements.py
 python3 control/pi5_controller/run_movements.py test_1
 python3 control/pi5_controller/run_movements.py direction_check
 ```
@@ -156,6 +168,18 @@ Execute with the car lifted:
 ```bash
 python3 control/pi5_controller/run_movements.py direction_check --execute --port /dev/ttyACM0 --speed 15
 ```
+
+Default movement values:
+
+```text
+program: direction_check
+Pico serial port: auto-detected, usually /dev/ttyACM0
+speed: from the movement JSON, currently 50 for the built-in JSON files
+duration: from the movement JSON, usually 250 ms
+gap: 300 ms
+```
+
+`--execute` is intentionally not automatic. Without it, the command is a dry-run and will not move the car.
 
 ## JSON Movement Files
 

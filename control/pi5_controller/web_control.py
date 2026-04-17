@@ -374,18 +374,21 @@ class RequestHandler(BaseHTTPRequestHandler):
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Browser controller for the Pico car.")
+    parser = argparse.ArgumentParser(
+        description="Browser controller for the Pico car.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
     parser.add_argument("--port", help="Serial port, for example /dev/ttyACM0.")
-    parser.add_argument("--baud", type=int, default=DEFAULT_BAUD)
-    parser.add_argument("--host", default="127.0.0.1")
-    parser.add_argument("--http-port", type=int, default=8000)
-    parser.add_argument("--pulse-ms", type=int, default=DEFAULT_DURATION_MS)
-    parser.add_argument("--camera-device", default="/dev/video0")
-    parser.add_argument("--camera-width", type=int, default=640)
-    parser.add_argument("--camera-height", type=int, default=480)
-    parser.add_argument("--camera-fps", type=int, default=15)
-    parser.add_argument("--camera-quality", type=int, default=80)
-    parser.add_argument("--no-camera", action="store_true")
+    parser.add_argument("--baud", type=int, default=DEFAULT_BAUD, help="Pico serial baud rate.")
+    parser.add_argument("--host", default="0.0.0.0", help="HTTP bind host.")
+    parser.add_argument("--http-port", type=int, default=8000, help="HTTP server port.")
+    parser.add_argument("--pulse-ms", type=int, default=DEFAULT_DURATION_MS, help="Movement pulse duration.")
+    parser.add_argument("--camera-device", default="/dev/video0", help="USB camera device.")
+    parser.add_argument("--camera-width", type=int, default=640, help="Camera capture width.")
+    parser.add_argument("--camera-height", type=int, default=480, help="Camera capture height.")
+    parser.add_argument("--camera-fps", type=int, default=15, help="Camera stream FPS.")
+    parser.add_argument("--camera-quality", type=int, default=80, help="JPEG quality.")
+    parser.add_argument("--no-camera", action="store_true", help="Disable camera streaming.")
     parser.add_argument(
         "--wheel-mode",
         choices=("ordinary", "mecanum"),
