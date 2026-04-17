@@ -14,10 +14,17 @@ from movement_programs import (
 )
 
 
+class HelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
+    def _get_help_string(self, action: argparse.Action) -> str:
+        if action.dest == "execute":
+            return action.help
+        return super()._get_help_string(action)
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Run simple car movement programs.",
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+        formatter_class=HelpFormatter,
     )
     parser.add_argument(
         "name",
@@ -25,13 +32,33 @@ def parse_args() -> argparse.Namespace:
         default="direction_check",
         help="Built-in program name or movement JSON file.",
     )
-    parser.add_argument("--list", action="store_true", help="List available programs and JSON files.")
-    parser.add_argument("--execute", action="store_true", help="Move the physical car.")
+    parser.add_argument(
+        "--list", action="store_true", help="List available programs and JSON files."
+    )
+    run_mode = parser.add_mutually_exclusive_group()
+    run_mode.add_argument(
+        "--execute",
+        action="store_true",
+        dest="execute",
+        help=argparse.SUPPRESS,
+    )
+    run_mode.add_argument(
+        "--dry-run",
+        action="store_false",
+        dest="execute",
+        default=argparse.SUPPRESS,
+        help="Print the movement plan only instead of moving the car.",
+    )
+    parser.set_defaults(execute=True)
     parser.add_argument("--port", help="Pico serial port, for example /dev/ttyACM0.")
-    parser.add_argument("--baud", type=int, default=DEFAULT_BAUD, help="Pico serial baud rate.")
+    parser.add_argument(
+        "--baud", type=int, default=DEFAULT_BAUD, help="Pico serial baud rate."
+    )
     parser.add_argument("--speed", type=int, help="Override movement speed.")
     parser.add_argument("--duration-ms", type=int, help="Override movement duration.")
-    parser.add_argument("--gap-ms", type=int, default=300, help="Pause after each movement.")
+    parser.add_argument(
+        "--gap-ms", type=int, default=300, help="Pause after each movement."
+    )
     return parser.parse_args()
 
 
@@ -51,7 +78,9 @@ def load_by_name(name: str, speed: int | None, duration_ms: int | None):
             speed=DEFAULT_SPEED if speed is None else speed,
             duration_ms=DEFAULT_DURATION_MS if duration_ms is None else duration_ms,
         )
-    return load_movements(resolve_movement_file(name), speed=speed, duration_ms=duration_ms)
+    return load_movements(
+        resolve_movement_file(name), speed=speed, duration_ms=duration_ms
+    )
 
 
 def main() -> int:
@@ -60,7 +89,9 @@ def main() -> int:
         print_available()
         return 0
     try:
-        movements = load_by_name(args.name, speed=args.speed, duration_ms=args.duration_ms)
+        movements = load_by_name(
+            args.name, speed=args.speed, duration_ms=args.duration_ms
+        )
     except (FileNotFoundError, ValueError, json.JSONDecodeError, CarError) as exc:
         print(f"Movement error: {exc}")
         return 1

@@ -9,7 +9,7 @@ These notes are the working contract for this repository.
 - Keep the Freenove vendor package local and ignored.
 - Keep Nordic firmware bundles local and ignored.
 - Prefer small, understandable modules over many specialized scripts.
-- Keep hardware-facing tests safe: dry-run first, then lifted-car tests, then floor tests.
+- Keep hardware-facing tests safe: use `--dry-run` for no-motor checks, then lifted-car tests, then floor tests.
 
 ## Current Scope
 
@@ -38,7 +38,7 @@ control/pi5_controller/movement_programs.py
   Hardcoded reusable movement programs plus JSON movement loading.
 
 control/pi5_controller/run_movements.py
-  CLI runner for dry-run and lifted-car movement tests.
+  CLI runner for movement tests. It executes by default and supports `--dry-run`.
 
 control/pi5_controller/web_control.py
   Browser movement controls and live camera stream.
@@ -116,19 +116,25 @@ List movement programs:
 python3 control/pi5_controller/run_movements.py --list
 ```
 
-Dry-run a movement:
+Run the default movement:
 
 ```bash
 python3 control/pi5_controller/run_movements.py
 ```
 
-Execute a movement with the car lifted:
+Dry-run a movement without moving the car:
 
 ```bash
-python3 control/pi5_controller/run_movements.py direction_check --execute --port /dev/ttyACM0 --speed 15
+python3 control/pi5_controller/run_movements.py --dry-run
 ```
 
-`--execute` must stay explicit because it is the safety boundary between dry-run and real motor movement.
+Run a slower lifted-car movement:
+
+```bash
+python3 control/pi5_controller/run_movements.py direction_check --speed 15
+```
+
+Movement execution is automatic in `run_movements.py`; use `--dry-run` to print the plan only.
 
 Run repository checks:
 

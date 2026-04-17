@@ -54,7 +54,7 @@ control/pi5_controller/movement_programs.py
   Small hardcoded movement programs and JSON movement loading.
 
 control/pi5_controller/run_movements.py
-  CLI to dry-run or execute movement programs and JSON movement files.
+  CLI to execute movement programs and JSON movement files, with a dry-run option.
 
 control/pi5_controller/web_control.py
   Browser controller with live camera stream.
@@ -155,18 +155,32 @@ List available movement programs and JSON files:
 python3 control/pi5_controller/run_movements.py --list
 ```
 
-Dry-run without moving the car:
+Execute the default `direction_check` movement:
 
 ```bash
 python3 control/pi5_controller/run_movements.py
-python3 control/pi5_controller/run_movements.py test_1
-python3 control/pi5_controller/run_movements.py direction_check
 ```
 
-Execute with the car lifted:
+Execute another movement:
 
 ```bash
-python3 control/pi5_controller/run_movements.py direction_check --execute --port /dev/ttyACM0 --speed 15
+python3 control/pi5_controller/run_movements.py test_1
+python3 control/pi5_controller/run_movements.py direction_check --speed 15
+```
+
+Dry-run without moving the car:
+
+```bash
+python3 control/pi5_controller/run_movements.py --dry-run
+python3 control/pi5_controller/run_movements.py test_1 --dry-run
+```
+
+The old `--execute` flag is still accepted, but it is no longer required.
+
+For any execution test, keep the car lifted until the movement is confirmed.
+
+```bash
+python3 control/pi5_controller/run_movements.py direction_check --speed 15
 ```
 
 Default movement values:
@@ -179,7 +193,7 @@ duration: from the movement JSON, usually 250 ms
 gap: 300 ms
 ```
 
-`--execute` is intentionally not automatic. Without it, the command is a dry-run and will not move the car.
+Movement execution is automatic. Use `--dry-run` when you only want to print the plan.
 
 ## JSON Movement Files
 
