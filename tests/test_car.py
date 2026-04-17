@@ -18,14 +18,18 @@ class CarTest(unittest.TestCase):
         self.assertEqual(normalize_action("A"), "left")
 
     def test_movement_from_dict_uses_defaults(self) -> None:
-        movement = Movement.from_dict({"action": "forward"}, default_speed=20, default_duration_ms=250)
+        movement = Movement.from_dict(
+            {"action": "forward"}, default_speed=20, default_duration_ms=250
+        )
 
         self.assertEqual(movement.action, "forward")
         self.assertEqual(movement.speed, 20)
         self.assertEqual(movement.duration_ms, 250)
 
     def test_stop_normalizes_speed_but_keeps_duration_for_pause(self) -> None:
-        movement = Movement.from_dict({"action": "stop", "speed": 50, "duration_ms": 100})
+        movement = Movement.from_dict(
+            {"action": "stop", "speed": 50, "duration_ms": 100}
+        )
 
         self.assertEqual(movement.action, "stop")
         self.assertEqual(movement.speed, 0)
@@ -40,20 +44,20 @@ class CarTest(unittest.TestCase):
 
         self.assertEqual(build_pico_line(movement), "F 50 250")
 
-    def test_ordinary_left_uses_full_speed_and_minor_reverse(self) -> None:
-        movement = Movement(action="left", speed=50, duration_ms=250)
+    def test_ordinary_left_uses_rolling_turn(self) -> None:
+        movement = Movement(action="left", speed=34, duration_ms=250)
 
-        self.assertEqual(build_pico_line(movement), "DRIVE -28 50 250")
+        self.assertEqual(build_pico_line(movement), "DRIVE 10 34 250")
 
-    def test_ordinary_right_uses_full_speed_and_minor_reverse(self) -> None:
-        movement = Movement(action="right", speed=50, duration_ms=250)
+    def test_ordinary_right_uses_rolling_turn(self) -> None:
+        movement = Movement(action="right", speed=34, duration_ms=250)
 
-        self.assertEqual(build_pico_line(movement), "DRIVE 50 -28 250")
+        self.assertEqual(build_pico_line(movement), "DRIVE 34 10 250")
 
-    def test_ordinary_turn_reverse_speed_is_capped_by_requested_speed(self) -> None:
-        movement = Movement(action="left", speed=20, duration_ms=250)
+    def test_ordinary_turn_inner_speed_scales_down_for_low_speed(self) -> None:
+        movement = Movement(action="left", speed=8, duration_ms=250)
 
-        self.assertEqual(build_pico_line(movement), "DRIVE -20 20 250")
+        self.assertEqual(build_pico_line(movement), "DRIVE 4 8 250")
 
     def test_mecanum_left_strafes(self) -> None:
         movement = Movement(action="left", speed=50, duration_ms=250)

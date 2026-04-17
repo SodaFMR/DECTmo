@@ -130,8 +130,8 @@ HTML = """<!doctype html>
           <span></span>
         </div>
         <section class="controls">
-          <label>Speed <span id="speedValue">50</span></label>
-          <input id="speed" type="range" min="10" max="100" value="50">
+          <label>Speed <span id="speedValue">34</span></label>
+          <input id="speed" type="range" min="10" max="100" value="34">
         </section>
         <p class="hint">Use W, A, S, D or the arrow keys. Space stops the car.</p>
       </section>

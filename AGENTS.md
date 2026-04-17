@@ -87,11 +87,18 @@ Use `ordinary` for the current car unless the physical wheels change.
 Current ordinary-wheel turning:
 
 ```text
-left  -> left side reverse at up to 28, right side forward at requested speed
-right -> left side forward at requested speed, right side reverse at up to 28
+left  -> left side forward slowly, right side forward at requested speed
+right -> left side forward at requested speed, right side forward slowly
 ```
 
-Built-in JSON movement files currently default to speed 34.
+The slow inner side is half the requested speed capped at 10. With speed 34:
+
+```text
+left  -> DRIVE 10 34 250
+right -> DRIVE 34 10 250
+```
+
+The Pi-side default movement speed and built-in JSON movement files currently default to speed 34.
 
 ## Safety
 

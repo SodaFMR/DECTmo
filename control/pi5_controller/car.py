@@ -8,10 +8,10 @@ import serial
 from serial.tools import list_ports
 
 DEFAULT_BAUD = 115200
-DEFAULT_SPEED = 50
+DEFAULT_SPEED = 34
 DEFAULT_DURATION_MS = 250
 DEFAULT_WHEEL_MODE = "ordinary"
-ORDINARY_TURN_REVERSE_SPEED = 30
+ORDINARY_TURN_INNER_SPEED = 10
 READ_IDLE_SECONDS = 0.08
 
 MOVE_ACTIONS = {"forward", "backward", "left", "right"}
@@ -133,19 +133,19 @@ def build_pico_line(movement: Movement, wheel_mode: str = DEFAULT_WHEEL_MODE) ->
         if movement.action == "right":
             return f"MR {movement.speed} {movement.duration_ms}"
 
-    reverse_speed = ordinary_turn_reverse_speed(movement.speed)
+    inner_speed = ordinary_turn_inner_speed(movement.speed)
     if movement.action == "left":
-        return f"DRIVE -{reverse_speed} {movement.speed} {movement.duration_ms}"
+        return f"DRIVE {inner_speed} {movement.speed} {movement.duration_ms}"
     if movement.action == "right":
-        return f"DRIVE {movement.speed} -{reverse_speed} {movement.duration_ms}"
+        return f"DRIVE {movement.speed} {inner_speed} {movement.duration_ms}"
 
     raise CarError(f"Unsupported movement action: {movement.action}")
 
 
-def ordinary_turn_reverse_speed(speed: int) -> int:
+def ordinary_turn_inner_speed(speed: int) -> int:
     if speed <= 0:
         return 0
-    return min(speed, ORDINARY_TURN_REVERSE_SPEED)
+    return min(speed // 2, ORDINARY_TURN_INNER_SPEED)
 
 
 class Car:

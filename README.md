@@ -105,14 +105,14 @@ For the current car, use the default:
 ordinary
 ```
 
-In `ordinary` mode, `left` and `right` use the requested speed on the forward-moving side and a small reverse speed on the opposite side. With speed `34`, the Pico command is:
+In `ordinary` mode, `left` and `right` use the requested speed on the outer side and a slow forward speed on the inner side. This gives a rolling turn instead of dragging the tires with a reverse-side pivot. With speed `34`, the Pico command is:
 
 ```text
-left  -> DRIVE -28 34 250
-right -> DRIVE 34 -28 250
+left  -> DRIVE 10 34 250
+right -> DRIVE 34 10 250
 ```
 
-The reverse side is capped at `28`, and also capped by the requested speed for low-speed tests.
+The inner side is half the requested speed capped at `10`, so lower-speed tests keep a smaller difference between the two sides.
 
 ## Run The Web UI
 
@@ -144,6 +144,7 @@ host: 0.0.0.0
 HTTP port: 8000
 camera: /dev/video0
 wheel mode: ordinary
+default speed: 34
 movement pulse: 250 ms
 ```
 
