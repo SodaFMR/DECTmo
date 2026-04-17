@@ -7,12 +7,11 @@ from typing import Any
 import serial
 from serial.tools import list_ports
 
-
 DEFAULT_BAUD = 115200
 DEFAULT_SPEED = 50
 DEFAULT_DURATION_MS = 250
 DEFAULT_WHEEL_MODE = "ordinary"
-ORDINARY_TURN_REVERSE_SPEED = 28
+ORDINARY_TURN_REVERSE_SPEED = 30
 READ_IDLE_SECONDS = 0.08
 
 MOVE_ACTIONS = {"forward", "backward", "left", "right"}
@@ -55,7 +54,9 @@ class Movement:
         default_duration_ms: int = DEFAULT_DURATION_MS,
     ) -> "Movement":
         action = str(payload.get("action", "stop"))
-        duration_ms = int(payload.get("duration_ms", payload.get("duration", default_duration_ms)))
+        duration_ms = int(
+            payload.get("duration_ms", payload.get("duration", default_duration_ms))
+        )
         speed = int(payload.get("speed", default_speed))
         return cls(action=action, duration_ms=duration_ms, speed=speed).normalized()
 
@@ -106,7 +107,9 @@ def find_pico_port(preferred_port: str | None = None) -> str:
             return port.device
 
     for port in ports:
-        if port.device.startswith("/dev/ttyACM") or port.device.startswith("/dev/ttyUSB"):
+        if port.device.startswith("/dev/ttyACM") or port.device.startswith(
+            "/dev/ttyUSB"
+        ):
             return port.device
 
     return ports[0].device
@@ -194,7 +197,9 @@ class Car:
         duration_ms: int = DEFAULT_DURATION_MS,
         speed: int = DEFAULT_SPEED,
     ) -> Movement:
-        movement = Movement(action=action, duration_ms=duration_ms, speed=speed).normalized()
+        movement = Movement(
+            action=action, duration_ms=duration_ms, speed=speed
+        ).normalized()
         self.send_line(build_pico_line(movement, self.wheel_mode))
         return movement
 
