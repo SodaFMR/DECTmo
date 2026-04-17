@@ -70,3 +70,23 @@ The safe order remains:
 The board currently responds as an nRF91x1 modem AT endpoint. Before real DECT NR+ transport can be tested, both nRF9151 boards need compatible firmware that can exchange application payloads over DECT NR+ and expose those payloads to the host.
 
 Do not treat AT modem connectivity as proof that our DECTmo packets are crossing the radio link.
+
+## Firmware Update Notes
+
+The local Nordic firmware bundle is ignored by Git:
+
+```text
+nrf9151dk_mfw-2.0.4_sdk-3.2.1/
+```
+
+Use `docs/nrf9151-firmware-flashing.md` before changing the board firmware. After flashing, rerun:
+
+```bash
+python3 control/pi5_controller/diagnose_nrf_modem.py
+```
+
+The expected modem version after updating the downloaded bundle is:
+
+```text
+mfw_nrf91x1_2.0.4
+```

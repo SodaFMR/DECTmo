@@ -1,6 +1,10 @@
 Freenove_4WD_Car_Kit_for_Raspberry_Pi_Pico-main/
 Freenove_4WD_Car_Kit_for_Raspberry_Pi_Pico*/
 
+# Local Nordic firmware bundles; keep downloaded vendor firmware out of Git.
+nrf9151dk_mfw-*_sdk-*/
+mfw_nrf91x1_*.zip
+
 __pycache__/
 *.py[cod]
 .pytest_cache/

@@ -209,6 +209,7 @@ control/pi5_controller/           Pi-side serial, motion, web, camera, and seque
 control/pi5_controller/sequences/ Predefined movement checks
 docs/bringup-checklist.md         First hardware and SSH bring-up flow
 docs/dect-command-packet-v1.md    Compact command packet for future nRF9151 transport
+docs/nrf9151-firmware-flashing.md Local Nordic firmware flashing notes
 docs/nrf9151-bringup.md           nRF9151 USB modem port diagnosis
 docs/pi5-pico-usb-control.md      USB control and Freenove motor notes
 docs/remote-control-and-video.md  Same-WiFi browser control and USB camera flow
@@ -228,3 +229,5 @@ The Freenove vendor package is intentionally ignored by Git. Keep it local when 
 6. Revisit H.264 or another compressed video path once the radio throughput and latency are measured.
 
 Do not add fake DECT transport behavior as a substitute for radio validation. Local packet encode/decode tests are useful, but transport behavior must be proven with the actual nRF9151 boards.
+
+Nordic firmware bundles such as `nrf9151dk_mfw-2.0.4_sdk-3.2.1/` are local vendor downloads and are ignored by Git.
