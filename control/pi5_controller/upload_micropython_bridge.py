@@ -110,7 +110,7 @@ def main() -> int:
             except serial.SerialException:
                 pass
 
-    print("Upload complete. Wait two seconds, then run diagnose_serial.py.")
+    print("Upload complete. Wait two seconds, then start web_control.py or run a dry-run movement.")
     return 0
 
 

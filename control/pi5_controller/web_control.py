@@ -9,10 +9,7 @@ from threading import Lock
 from urllib.parse import urlparse
 
 from camera_stream import CameraConfig, UsbCamera
-from motion_controller import MotionController
-from motion_protocol import MotionCommand, MotionProtocolError
-from serial_car import DEFAULT_BAUD, DEFAULT_PULSE_MS, SerialCar, SerialCarError
-from web_motion import web_command_payload
+from car import DEFAULT_BAUD, DEFAULT_DURATION_MS, DEFAULT_SPEED, Car, CarError
 
 
 HTML = """<!doctype html>
@@ -103,13 +100,6 @@ HTML = """<!doctype html>
     input[type="range"] {
       width: 220px;
     }
-    select {
-      font-size: 16px;
-      padding: 8px;
-      border-radius: 8px;
-      border: 1px solid #555;
-      background: white;
-    }
     .hint {
       margin-top: 16px;
       font-size: 15px;
@@ -142,13 +132,6 @@ HTML = """<!doctype html>
         <section class="controls">
           <label>Speed <span id="speedValue">50</span></label>
           <input id="speed" type="range" min="10" max="100" value="50">
-          <label>
-            Wheel mode
-            <select id="wheelMode">
-              <option value="ordinary">ordinary</option>
-              <option value="mecanum">mecanum</option>
-            </select>
-          </label>
         </section>
         <p class="hint">Use W, A, S, D or the arrow keys. Space stops the car.</p>
       </section>
@@ -164,7 +147,6 @@ HTML = """<!doctype html>
     const statusEl = document.getElementById("status");
     const speedEl = document.getElementById("speed");
     const speedValueEl = document.getElementById("speedValue");
-    const wheelModeEl = document.getElementById("wheelMode");
     const cameraStatusEl = document.getElementById("cameraStatus");
     const cameraFeedEl = document.getElementById("cameraFeed");
     let repeatTimer = null;
@@ -180,14 +162,14 @@ HTML = """<!doctype html>
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
           action,
-          speed: Number(speedEl.value),
-          wheelMode: wheelModeEl.value
+          speed: Number(speedEl.value)
         })
       });
       if (!response.ok) {
         throw new Error(await response.text());
       }
-      statusEl.textContent = action;
+      const result = await response.json();
+      statusEl.textContent = result.movement.action;
     }
 
     function start(action, button) {
@@ -286,28 +268,19 @@ HTML = """<!doctype html>
 
 
 class Controller:
-    def __init__(
-        self,
-        car: SerialCar,
-        camera: UsbCamera,
-        default_wheel_mode: str,
-        pulse_ms: int,
-    ) -> None:
+    def __init__(self, car: Car, camera: UsbCamera, pulse_ms: int) -> None:
         self.car = car
         self.camera = camera
-        self.default_wheel_mode = default_wheel_mode
         self.pulse_ms = pulse_ms
-        self.motion_controller = MotionController(car=car, dry_run=False)
         self.lock = Lock()
 
     def command(self, payload: dict[str, object]) -> dict[str, object]:
-        command = MotionCommand.from_dict(self.command_payload(payload))
+        action = str(payload.get("action", "stop"))
+        speed = int(payload.get("speed", DEFAULT_SPEED))
+        duration_ms = int(payload.get("duration_ms", payload.get("durationMs", self.pulse_ms)))
         with self.lock:
-            result = self.motion_controller.execute(command)
-        return result.to_dict()
-
-    def command_payload(self, payload: dict[str, object]) -> dict[str, object]:
-        return web_command_payload(payload, self.default_wheel_mode, self.pulse_ms)
+            movement = self.car.send_move(action=action, speed=speed, duration_ms=duration_ms)
+        return {"ok": True, "movement": movement.to_dict()}
 
     def health(self) -> dict[str, object]:
         with self.lock:
@@ -389,7 +362,7 @@ class RequestHandler(BaseHTTPRequestHandler):
             length = int(self.headers.get("Content-Length", "0"))
             payload = json.loads(self.rfile.read(length).decode("utf-8"))
             result = self.controller.command(payload)
-        except (ValueError, json.JSONDecodeError, MotionProtocolError, SerialCarError) as exc:
+        except (ValueError, json.JSONDecodeError, CarError) as exc:
             self.send_response(HTTPStatus.BAD_REQUEST)
             self.end_headers()
             self.wfile.write(str(exc).encode("utf-8"))
@@ -406,7 +379,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--baud", type=int, default=DEFAULT_BAUD)
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--http-port", type=int, default=8000)
-    parser.add_argument("--pulse-ms", type=int, default=DEFAULT_PULSE_MS)
+    parser.add_argument("--pulse-ms", type=int, default=DEFAULT_DURATION_MS)
     parser.add_argument("--camera-device", default="/dev/video0")
     parser.add_argument("--camera-width", type=int, default=640)
     parser.add_argument("--camera-height", type=int, default=480)
@@ -417,7 +390,7 @@ def parse_args() -> argparse.Namespace:
         "--wheel-mode",
         choices=("ordinary", "mecanum"),
         default="ordinary",
-        help="Default wheel mode.",
+        help="ordinary turns left/right; mecanum strafes left/right.",
     )
     return parser.parse_args()
 
@@ -425,7 +398,7 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     try:
-        with SerialCar(args.port, args.baud) as car:
+        with Car(args.port, args.baud, wheel_mode=args.wheel_mode) as car:
             camera_device = "none" if args.no_camera else args.camera_device
             camera = UsbCamera(
                 CameraConfig(
@@ -436,7 +409,7 @@ def main() -> int:
                     quality=args.camera_quality,
                 )
             )
-            RequestHandler.controller = Controller(car, camera, args.wheel_mode, args.pulse_ms)
+            RequestHandler.controller = Controller(car, camera, args.pulse_ms)
             server = ThreadingHTTPServer((args.host, args.http_port), RequestHandler)
             print(f"Serial port: {car.port}")
             print(f"Open http://{args.host}:{args.http_port}")
@@ -447,7 +420,7 @@ def main() -> int:
             finally:
                 camera.close()
                 server.server_close()
-    except SerialCarError as exc:
+    except CarError as exc:
         print(f"Web controller error: {exc}")
         return 1
     return 0

@@ -1,0 +1,15 @@
+{
+  "name": "Forward, backward, left, right check",
+  "default_speed": 20,
+  "default_duration_ms": 250,
+  "movements": [
+    {"action": "forward"},
+    {"action": "stop", "duration_ms": 100},
+    {"action": "backward"},
+    {"action": "stop", "duration_ms": 100},
+    {"action": "left"},
+    {"action": "stop", "duration_ms": 100},
+    {"action": "right"},
+    {"action": "stop", "duration_ms": 100}
+  ]
+}
