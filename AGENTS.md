@@ -24,6 +24,7 @@ These notes are the persistent working contract for future development sessions 
 - Browser control is routed through the Pi motion standard, not directly to raw Pico strings.
 - USB camera streaming works through the Pi browser server.
 - Local movement sequences and protocol unit tests are available.
+- DECT command packet v1 is defined in `docs/dect-command-packet-v1.md` and implemented in `control/pi5_controller/dect_packet.py`.
 
 ## Hardware Roles
 
@@ -41,7 +42,9 @@ These notes are the persistent working contract for future development sessions 
 - Web UI, local sequences, keyboard control, and future DECT input must not bypass motion validation.
 - The Pi may convert validated motion commands into Pico-specific serial strings.
 - Remote-side DECT commands should target the logical motion contract, not raw Pico commands.
+- Future nRF9151 command transport should carry the packet bytes from `control/pi5_controller/dect_packet.py`.
 - Command traffic is reliable and acknowledged.
+- Heartbeat packets are the preferred no-motor link check for future nRF9151 bring-up.
 - Video traffic is separate and can be best-effort.
 - Emergency stop must always have priority over video traffic and queued movement.
 
@@ -92,6 +95,7 @@ INFO bridge=micropython_serial_bridge version=1.1.0 motor_direction=-1
 PONG
 OK STOP
 OK MOVE
+OK DRIVE
 OK AUTO_STOP
 ```
 
@@ -120,6 +124,7 @@ OK AUTO_STOP
 - Validate external inputs at the boundary before reaching serial or motor code.
 - Keep tests focused on protocol, packet, validation, and mapping behavior.
 - Avoid broad refactors while hardware behavior is still being calibrated.
+- Remove stale alternate code paths once the project has a verified standard path.
 
 ## Useful Commands
 
@@ -162,8 +167,7 @@ python -m unittest discover -s tests
 
 1. Keep movement debugging separate from protocol work unless a protocol issue is discovered.
 2. Finish ordinary-wheel left/right calibration with lifted-car and floor tests.
-3. Define DECT command packet v1 around the existing motion fields.
-4. Add packet encode/decode tests without pretending they are radio tests.
-5. Integrate one nRF9151 with the Pi 5 over USB serial.
-6. Prove real DECT command delivery between two nRF9151 boards.
-7. Only after command reliability is stable, start low-quality video packetization and throughput tests.
+3. Integrate one nRF9151 with the Pi 5 over USB serial.
+4. Build the Pi-side nRF serial adapter around the DECTmo packet bytes.
+5. Prove real DECT command delivery between two nRF9151 boards with heartbeat, emergency stop, and one short movement.
+6. Only after command reliability is stable, start low-quality video packetization and throughput tests.

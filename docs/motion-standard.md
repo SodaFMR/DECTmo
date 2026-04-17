@@ -178,7 +178,7 @@ The server returns a `motion.ack` response for accepted commands.
 
 ## DECT NR+ Mapping Later
 
-JSON is the current human-readable standard. For the real DECT transport, the payload can be converted into a compact binary packet, but it must preserve the same fields:
+JSON is the human-readable Pi-side standard. The compact binary packet for the real DECT transport is defined in `docs/dect-command-packet-v1.md`, and it preserves the same logical fields:
 
 ```text
 version

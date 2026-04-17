@@ -51,15 +51,17 @@ The Pico will appear on the Pi as a serial device, usually `/dev/ttyACM0`.
 
 Keep the Freenove battery pack connected and switched on for the motors. The Pi 5 USB port should not be used as the motor power source.
 
-## Flash The Pico
+## Install The Pico Bridge
 
-1. Install Arduino IDE on your development machine.
-2. Add Raspberry Pi Pico board support.
-3. Open `control/pico_serial_bridge/pico_serial_bridge.ino`.
-4. Select the correct Pico board and serial port.
-5. Upload the sketch.
+The current verified Pico path is MicroPython. The Pi-side upload helper copies `control/pico_micropython_bridge/main.py` to the Pico as `main.py`:
 
-The firmware accepts newline-terminated USB serial commands:
+```bash
+cd ~/Desktop/DECTmo
+python3 control/pi5_controller/upload_micropython_bridge.py --port /dev/ttyACM0
+python3 control/pi5_controller/diagnose_serial.py --port /dev/ttyACM0
+```
+
+The bridge accepts newline-terminated USB serial commands:
 
 ```text
 F 50 250       forward at speed 50 for 250 ms
@@ -69,12 +71,12 @@ R 50 250       ordinary-wheel right turn
 ML 50 250      mecanum strafe left
 MR 50 250      mecanum strafe right
 S              stop immediately
-DRIVE 50 -50   raw differential left/right speeds
-WHEEL 50 50 50 50   raw four-wheel speeds
+DRIVE 50 -50 250    raw differential left/right speeds for 250 ms
+WHEEL 50 50 50 50 250   raw four-wheel speeds for 250 ms
 PING           health check
 ```
 
-The firmware also has a failsafe: if serial commands stop arriving, the motors stop automatically.
+The bridge also has a failsafe: if serial commands stop arriving, the motors stop automatically.
 
 ## Run From The Pi 5
 

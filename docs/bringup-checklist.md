@@ -58,7 +58,7 @@ ssh qartia "test -d ~/Desktop/DECTmo && git -C ~/Desktop/DECTmo pull --ff-only |
 
 ## 4. Ping The Pico Firmware
 
-This verifies the flashed bridge sketch is alive, even while the car batteries are still charging:
+This verifies the Pico bridge is alive, even while the car batteries are still charging:
 
 ```bash
 ssh qartia "cd ~/Desktop/DECTmo && python3 - <<'PY'
@@ -89,9 +89,9 @@ OK STOP
 OK MOVE
 ```
 
-If the output says something like `La Pico confirma que recibio: S`, USB serial is working but the Pico is running a different program. Flash `control/pico_serial_bridge/pico_serial_bridge.ino` onto the Pico before testing motor movement.
+If the output says something like `La Pico confirma que recibio: S`, USB serial is working but the Pico is running a different program. Upload the MicroPython bridge before testing motor movement.
 
-Because the Pico is already running MicroPython in that case, the fastest fix is to upload the MicroPython bridge from the Pi:
+The fastest fix is to upload the MicroPython bridge from the Pi:
 
 ```bash
 ssh qartia "cd ~/Desktop/DECTmo && python3 control/pi5_controller/upload_micropython_bridge.py --port /dev/ttyACM0"

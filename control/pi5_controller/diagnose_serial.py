@@ -83,7 +83,7 @@ def classify(lines_by_command: dict[str, list[str]]) -> str:
     if any("Pico confirma" in line or "recibi" in line for line in all_lines):
         return (
             "Mismatch: USB serial works, but the Pico is running a different "
-            "echo/MicroPython-style program. Flash pico_serial_bridge.ino next."
+            "echo/MicroPython-style program. Upload the MicroPython bridge next."
         )
     if not all_lines:
         return (
@@ -92,7 +92,7 @@ def classify(lines_by_command: dict[str, list[str]]) -> str:
         )
     return (
         "Unknown firmware response: USB serial works, but replies do not match "
-        "pico_serial_bridge."
+        "micropython_serial_bridge."
     )
 
 
