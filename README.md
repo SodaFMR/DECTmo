@@ -19,7 +19,7 @@ The following parts have been brought up and verified:
 - USB camera live stream exposed by the Pi browser server.
 - Motion sequences and validation tests for repeatable movement checks.
 - DECT command packet v1 defined and covered by encode/decode tests.
-- nRF9151 USB modem/application port identified as `/dev/ttyACM1`, responding to `AT` and `AT+CGMR`.
+- nRF9151 USB modem/application port identified as `/dev/ttyACM1`, responding to `AT` and `AT+CGMR` with modem firmware `mfw_nrf91x1_2.0.4`.
 
 Left/right movement is intentionally still marked for real-world tuning. The current ordinary-wheel behavior is a gentle pivot: one side stops while the other side moves at 65% of the requested speed.
 

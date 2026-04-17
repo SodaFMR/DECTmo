@@ -26,7 +26,7 @@ These notes are the persistent working contract for future development sessions 
 - USB camera streaming works through the Pi browser server.
 - Local movement sequences and protocol unit tests are available.
 - DECT command packet v1 is defined in `docs/dect-command-packet-v1.md` and implemented in `control/pi5_controller/dect_packet.py`.
-- Pi-side nRF9151 is visible through SEGGER J-Link and `/dev/ttyACM1` responds to safe `AT` / `AT+CGMR` probes with `mfw_nrf91x1_2.0.2`.
+- Pi-side nRF9151 is visible through SEGGER J-Link and `/dev/ttyACM1` responds to safe `AT` / `AT+CGMR` probes with `mfw_nrf91x1_2.0.4`.
 - Local firmware flashing notes for the downloaded `nrf9151dk_mfw-2.0.4_sdk-3.2.1/` bundle live in `docs/nrf9151-firmware-flashing.md`.
 
 ## Hardware Roles

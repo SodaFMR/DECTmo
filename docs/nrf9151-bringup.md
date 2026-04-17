@@ -20,7 +20,7 @@ Verified safe commands:
 
 ```text
 AT       -> OK
-AT+CGMR  -> mfw_nrf91x1_2.0.2
+AT+CGMR  -> mfw_nrf91x1_2.0.4
 ```
 
 `/dev/ttyACM2` currently does not reply to these AT commands, so do not use it as the Pi-side modem command port unless the board firmware changes.
@@ -47,9 +47,9 @@ Expected useful result:
 > AT
 OK
 > AT+CGMR
-mfw_nrf91x1_2.0.2
+mfw_nrf91x1_2.0.4
 OK
-Result: OK modem AT port, firmware=mfw_nrf91x1_2.0.2
+Result: OK modem AT port, firmware=mfw_nrf91x1_2.0.4
 ```
 
 This only proves USB serial and modem AT connectivity. It does not prove DECT NR+ packet transport.
@@ -67,7 +67,7 @@ The safe order remains:
 
 ## Open Firmware Question
 
-The board currently responds as an nRF91x1 modem AT endpoint. Before real DECT NR+ transport can be tested, both nRF9151 boards need compatible firmware that can exchange application payloads over DECT NR+ and expose those payloads to the host.
+The board currently responds as an nRF91x1 modem AT endpoint with modem firmware `mfw_nrf91x1_2.0.4`. Before real DECT NR+ transport can be tested, both nRF9151 boards need compatible firmware that can exchange application payloads over DECT NR+ and expose those payloads to the host.
 
 Do not treat AT modem connectivity as proof that our DECTmo packets are crossing the radio link.
 
@@ -85,7 +85,7 @@ Use `docs/nrf9151-firmware-flashing.md` before changing the board firmware. Afte
 python3 control/pi5_controller/diagnose_nrf_modem.py
 ```
 
-The expected modem version after updating the downloaded bundle is:
+The verified modem version after updating the downloaded bundle is:
 
 ```text
 mfw_nrf91x1_2.0.4
