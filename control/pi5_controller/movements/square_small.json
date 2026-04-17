@@ -1,6 +1,6 @@
 {
   "name": "Small square movement",
-  "default_speed": 50,
+  "default_speed": 34,
   "default_duration_ms": 350,
   "movements": [
     { "action": "forward" },

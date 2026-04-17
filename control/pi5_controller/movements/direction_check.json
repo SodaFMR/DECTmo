@@ -1,6 +1,6 @@
 {
   "name": "Forward, backward, left, right check",
-  "default_speed": 50,
+  "default_speed": 34,
   "default_duration_ms": 250,
   "movements": [
     { "action": "forward" },

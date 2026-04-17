@@ -74,9 +74,9 @@ control/pico_micropython_bridge/main.py
 The core API should feel like this:
 
 ```python
-car.send_move(action="forward", duration_ms=250, speed=50)
-car.send_move(action="left", duration_ms=250, speed=30)
-car.send_move(action="backward", duration_ms=250, speed=50)
+car.send_move(action="forward", duration_ms=250, speed=34)
+car.send_move(action="left", duration_ms=250, speed=34)
+car.send_move(action="backward", duration_ms=250, speed=34)
 car.stop()
 ```
 
@@ -105,11 +105,11 @@ For the current car, use the default:
 ordinary
 ```
 
-In `ordinary` mode, `left` and `right` use the requested speed on the forward-moving side and a small reverse speed on the opposite side. With speed `50`, the Pico command is:
+In `ordinary` mode, `left` and `right` use the requested speed on the forward-moving side and a small reverse speed on the opposite side. With speed `34`, the Pico command is:
 
 ```text
-left  -> DRIVE -28 50 250
-right -> DRIVE 50 -28 250
+left  -> DRIVE -28 34 250
+right -> DRIVE 34 -28 250
 ```
 
 The reverse side is capped at `28`, and also capped by the requested speed for low-speed tests.
@@ -165,7 +165,7 @@ Execute another movement:
 
 ```bash
 python3 control/pi5_controller/run_movements.py test_1
-python3 control/pi5_controller/run_movements.py direction_check --speed 15
+python3 control/pi5_controller/run_movements.py direction_check --speed 20
 ```
 
 Dry-run without moving the car:
@@ -180,7 +180,7 @@ The old `--execute` flag is still accepted, but it is no longer required.
 For any execution test, keep the car lifted until the movement is confirmed.
 
 ```bash
-python3 control/pi5_controller/run_movements.py direction_check --speed 15
+python3 control/pi5_controller/run_movements.py direction_check --speed 20
 ```
 
 Default movement values:
@@ -188,7 +188,7 @@ Default movement values:
 ```text
 program: direction_check
 Pico serial port: auto-detected, usually /dev/ttyACM0
-speed: from the movement JSON, currently 50 for the built-in JSON files
+speed: from the movement JSON, currently 34 for the built-in JSON files
 duration: from the movement JSON, usually 250 ms
 gap: 300 ms
 ```
@@ -208,7 +208,7 @@ Example:
 ```json
 {
   "name": "Short forward movement",
-  "default_speed": 20,
+  "default_speed": 34,
   "default_duration_ms": 250,
   "movements": [
     {"action": "forward"},

@@ -58,8 +58,8 @@ control/pico_micropython_bridge/main.py
 Use the simple car API:
 
 ```python
-car.send_move(action="forward", duration_ms=250, speed=50)
-car.send_move(action="left", duration_ms=250, speed=30)
+car.send_move(action="forward", duration_ms=250, speed=34)
+car.send_move(action="left", duration_ms=250, speed=34)
 car.stop()
 ```
 
@@ -90,6 +90,8 @@ Current ordinary-wheel turning:
 left  -> left side reverse at up to 28, right side forward at requested speed
 right -> left side forward at requested speed, right side reverse at up to 28
 ```
+
+Built-in JSON movement files currently default to speed 34.
 
 ## Safety
 
@@ -131,7 +133,7 @@ python3 control/pi5_controller/run_movements.py --dry-run
 Run a slower lifted-car movement:
 
 ```bash
-python3 control/pi5_controller/run_movements.py direction_check --speed 15
+python3 control/pi5_controller/run_movements.py direction_check --speed 20
 ```
 
 Movement execution is automatic in `run_movements.py`; use `--dry-run` to print the plan only.
