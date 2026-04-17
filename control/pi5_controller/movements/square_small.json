@@ -1,16 +1,16 @@
 {
   "name": "Small square movement",
-  "default_speed": 20,
+  "default_speed": 50,
   "default_duration_ms": 350,
   "movements": [
-    {"action": "forward"},
-    {"action": "right"},
-    {"action": "forward"},
-    {"action": "right"},
-    {"action": "forward"},
-    {"action": "right"},
-    {"action": "forward"},
-    {"action": "right"},
-    {"action": "stop", "duration_ms": 100}
+    { "action": "forward" },
+    { "action": "right" },
+    { "action": "forward" },
+    { "action": "right" },
+    { "action": "forward" },
+    { "action": "right" },
+    { "action": "forward" },
+    { "action": "right" },
+    { "action": "stop", "duration_ms": 100 }
   ]
 }

@@ -12,7 +12,7 @@ DEFAULT_BAUD = 115200
 DEFAULT_SPEED = 50
 DEFAULT_DURATION_MS = 250
 DEFAULT_WHEEL_MODE = "ordinary"
-ORDINARY_TURN_SPEED_SCALE = 0.65
+ORDINARY_TURN_REVERSE_SPEED = 28
 READ_IDLE_SECONDS = 0.08
 
 MOVE_ACTIONS = {"forward", "backward", "left", "right"}
@@ -130,19 +130,19 @@ def build_pico_line(movement: Movement, wheel_mode: str = DEFAULT_WHEEL_MODE) ->
         if movement.action == "right":
             return f"MR {movement.speed} {movement.duration_ms}"
 
-    turn_speed = scaled_turn_speed(movement.speed)
+    reverse_speed = ordinary_turn_reverse_speed(movement.speed)
     if movement.action == "left":
-        return f"DRIVE 0 {turn_speed} {movement.duration_ms}"
+        return f"DRIVE -{reverse_speed} {movement.speed} {movement.duration_ms}"
     if movement.action == "right":
-        return f"DRIVE {turn_speed} 0 {movement.duration_ms}"
+        return f"DRIVE {movement.speed} -{reverse_speed} {movement.duration_ms}"
 
     raise CarError(f"Unsupported movement action: {movement.action}")
 
 
-def scaled_turn_speed(speed: int) -> int:
+def ordinary_turn_reverse_speed(speed: int) -> int:
     if speed <= 0:
         return 0
-    return max(1, min(100, round(speed * ORDINARY_TURN_SPEED_SCALE)))
+    return min(speed, ORDINARY_TURN_REVERSE_SPEED)
 
 
 class Car:

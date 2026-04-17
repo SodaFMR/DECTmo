@@ -84,6 +84,13 @@ Aliases like `w`, `a`, `s`, `d`, `back`, and `backwards` are normalized in `car.
 
 Use `ordinary` for the current car unless the physical wheels change.
 
+Current ordinary-wheel turning:
+
+```text
+left  -> left side reverse at up to 28, right side forward at requested speed
+right -> left side forward at requested speed, right side reverse at up to 28
+```
+
 ## Safety
 
 - Do not power motors from the Pi USB port.

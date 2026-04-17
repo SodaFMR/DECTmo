@@ -105,6 +105,15 @@ For the current car, use the default:
 ordinary
 ```
 
+In `ordinary` mode, `left` and `right` use the requested speed on the forward-moving side and a small reverse speed on the opposite side. With speed `50`, the Pico command is:
+
+```text
+left  -> DRIVE -28 50 250
+right -> DRIVE 50 -28 250
+```
+
+The reverse side is capped at `28`, and also capped by the requested speed for low-speed tests.
+
 ## Run The Web UI
 
 On the car Pi:

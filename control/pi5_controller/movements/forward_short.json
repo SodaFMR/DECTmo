@@ -1,9 +1,9 @@
 {
   "name": "Short forward movement",
-  "default_speed": 20,
+  "default_speed": 50,
   "default_duration_ms": 250,
   "movements": [
-    {"action": "forward"},
-    {"action": "stop", "duration_ms": 100}
+    { "action": "forward" },
+    { "action": "stop", "duration_ms": 100 }
   ]
 }
